@@ -1,4 +1,4 @@
-package com.example.scanner_pn
+package com.sebastianlandaeta.scannerpn
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537074265068",
+    "project_id": "scanner-pn",
+    "storage_bucket": "scanner-pn.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537074265068:android:9a9af829aeef10039d2ec9",
+        "android_client_info": {
+          "package_name": "com.sebastianlandaeta.scannerpn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1-jRU63nyBTxW5y3ekPwIt-Ni4cBBfe8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
