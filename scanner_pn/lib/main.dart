@@ -1,10 +1,16 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -12,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Text Recognition Example',
+      title: 'Scanner de Partidas de Nacimiento',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -43,19 +49,86 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
     _extractTextFromImage();
   }
 
-  Future<void> _extractTextFromImage() async {
-    if (_imageFile == null) return;
+Future<void> _extractTextFromImage() async {
+  if (_imageFile == null) return;
 
-    final inputImage = InputImage.fromFile(_imageFile!);
-    final textRecognizer = TextRecognizer();
-    final text = await textRecognizer.processImage(inputImage);
+  final inputImage = InputImage.fromFile(_imageFile!);
+  final textRecognizer = TextRecognizer();
+  final text = await textRecognizer.processImage(inputImage);
 
-    setState(() {
-      _extractedText = text.text;
-    });
+  setState(() {
+    _extractedText = text.text;
+  });
 
-    await textRecognizer.close();
+  await textRecognizer.close();
+
+  // Comparar el texto extraído con documentos en Firestore
+  await _compareWithFirestore(text.text);
+}
+
+Future<void> _compareWithFirestore(String extractedText) async {
+  final usersCollection = FirebaseFirestore.instance.collection('users');
+  final querySnapshot = await usersCollection.get();
+
+  for (QueryDocumentSnapshot document in querySnapshot.docs) {
+    final cedula = document['Cédula'];
+    final nombre = document['Nombre'];
+    
+    print('$cedula');
+    print('$nombre');
+    print('$extractedText');
+
+    if (extractedText.trim() == 'Cédula: $cedula\nNombre: $nombre'.trim()) {
+      // Coincidencia encontrada
+      _showConfirmationMessage();
+      return;
+    }
   }
+
+  // No se encontró ninguna coincidencia
+  _showNoConfirmationMessage();
+}
+
+void _showConfirmationMessage() {
+  // Muestra el mensaje de confirmación
+  // Puedes usar showDialog, SnackBar, o cualquier otro método que prefieras
+  // Ejemplo:
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Confirmación'),
+      content: Text('El texto coincide con un usuario en la base de datos.'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
+void _showNoConfirmationMessage() {
+  // Muestra el mensaje de no confirmación
+  // Ejemplo:
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('No Confirmación'),
+      content: Text('El texto no coincide con ningún usuario en la base de datos.'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
