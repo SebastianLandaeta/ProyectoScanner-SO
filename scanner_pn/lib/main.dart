@@ -11,7 +11,7 @@ import 'firebase_options.dart';
 
 // Función main
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Inicializar aplicación justo a los servicios de Firebase
+  WidgetsFlutterBinding.ensureInitialized(); // Inicializar aplicación junto a los servicios de Firebase
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Scanner de Partidas de Nacimiento',
+      title: 'Scanner de texto',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -93,9 +93,9 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
     // No se encontró ninguna coincidencia
     _showNoConfirmationMessage();
   }
-
+  
+  // Muestra el mensaje de confirmación
   void _showConfirmationMessage() {
-    // Muestra el mensaje de confirmación
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -136,7 +136,7 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scanner de Partidas de Nacimiento'),
+        title: Text('Scanner de Texto'),
       ),
       body: Center(
         child: _imageFile == null
